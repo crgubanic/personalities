@@ -73,7 +73,7 @@ Don't have an API key yet? No problem! The app works in **Demo Mode** with pre-w
 
 ### Add a Custom Background
 
-Place a `background.png` image in the root directory. If no image is found, the app uses a beautiful purple gradient by default.
+Place a `background.webp` image in the root directory. If no image is found, the app uses a beautiful purple gradient by default.
 
 ### Create Custom Personalities
 
@@ -91,7 +91,7 @@ ai-personalities-showcase/
 ├── README.md                # This file
 ├── .streamlit/
 │   └── secrets.toml         # API keys (not tracked in git)
-└── background.png           # Optional custom background
+└── background.webp           # Optional custom background
 ```
 
 ## 🔧 Configuration

@@ -76,25 +76,14 @@ def get_demo_response(personality_key: str) -> str:
 # ----------------------------
 # Background helper
 # ----------------------------
-def set_background(image_path: str, use_lightweight: bool = False):
+def set_background(image_path: str):
     """Set background image if it exists, otherwise use gradient."""
-    # If lightweight mode is enabled, always use gradient
-    if use_lightweight:
-        desktop_bg = "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
-        mobile_bg = "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+    if Path(image_path).exists():
+        img_bytes = Path(image_path).read_bytes()
+        encoded = base64.b64encode(img_bytes).decode()
+        bg_image = f"url(data:image/png;base64,{encoded})"
     else:
-        # For desktop, load the image if it exists
-        if Path(image_path).exists():
-            try:
-                img_bytes = Path(image_path).read_bytes()
-                encoded = base64.b64encode(img_bytes).decode()
-                desktop_bg = f"url(data:image/png;base64,{encoded})"
-            except:
-                desktop_bg = "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
-        else:
-            desktop_bg = "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
-        
-        mobile_bg = "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+        bg_image = "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
     
     st.markdown(
         f"""
@@ -113,14 +102,6 @@ def set_background(image_path: str, use_lightweight: bool = False):
 
         h1, h2, h3, h4, h5, h6, p, div[data-testid="stMarkdownContainer"], span, label {{
             color: #000000 !important;
-        }}
-        
-        /* Make captions more prominent */
-        .stCaption, [data-testid="stCaptionContainer"], small {{
-            font-size: 1.1rem !important;
-            font-weight: 500 !important;
-            font-style: italic !important;
-            margin-top: 0.5rem !important;
         }}
         
         /* Caption text styling - more specific targeting */
@@ -242,20 +223,14 @@ def set_background(image_path: str, use_lightweight: bool = False):
         unsafe_allow_html=True
     )
 
-set_background("background.png", use_lightweight)
+set_background("background.webp")
 
 # ----------------------------
 # Streamlit UI
 # ----------------------------
 st.set_page_config(page_title="AI Personalities Showcase", page_icon="🧠", layout="centered")
-
-# Prominent mobile-friendly toggle at the very top
-st.markdown("### 📱 Mobile or slow connection?")
-use_lightweight = st.checkbox("✅ Enable Lightweight Mode (faster loading, no background image)", value=False, help="Recommended for mobile devices")
-st.markdown("---")
-
 st.title("🧠 AI Personalities Showcase")
-st.caption("Gen-AI powered personalities with distinct voices 🎭")
+st.caption("Gen-AI powered personalities with distinct voices. Presets are snarky and playful. Create your own! 🎭")
 
 # Show mode indicator
 if not USE_AI:
@@ -335,7 +310,7 @@ user_input = st.text_area(
 )
 
 # Generate button
-if st.button("💬 Generate Snarky Response", type="primary"):
+if st.button("💬 Generate Response", type="primary"):
     if not user_input.strip():
         st.warning("Please enter a question.")
     else:
