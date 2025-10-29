@@ -230,7 +230,7 @@ set_background("background.png")
 # ----------------------------
 st.set_page_config(page_title="AI Personalities Showcase", page_icon="🧠", layout="centered")
 st.title("🧠 AI Personalities Showcase")
-st.caption("Gen-AI powered personalities with distinct voices 🎭")
+st.caption("Gen-AI powered personalities with distinct voices. Presets are snarky and playful. Create your own! 🎭")
 
 # Show mode indicator
 if not USE_AI:
