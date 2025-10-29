@@ -83,7 +83,7 @@ def set_background(image_path: str):
         encoded = base64.b64encode(img_bytes).decode()
         bg_image = f"url(data:image/png;base64,{encoded})"
     else:
-        bg_image = "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+        bg_image = "linear-gradient(135deg, #A3AFFF 0%, #764ba2 100%)"
     
     st.markdown(
         f"""
@@ -133,8 +133,8 @@ def set_background(image_path: str):
 
         button[kind="primary"] {{
             color: white !important;
-            background-color: #667eea !important;
-            border-color: #667eea !important;
+            background-color: #A3AFFF !important;
+            border-color: #A3AFFF !important;
         }}
         button[kind="primary"]:hover {{
             background-color: #5568d3 !important;
