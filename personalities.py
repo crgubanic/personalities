@@ -340,7 +340,7 @@ if st.button("💬 Generate Response", type="primary"):
         st.markdown(f"> {response}")
 
 # Example questions
-with st.expander("💡 Need inspiration? Try these questions"):
+with st.expander("💡 Need inspiration? Try these questions:"):
     st.markdown("""
     - Why do cats always land on their feet?
     - How does the internet work?
