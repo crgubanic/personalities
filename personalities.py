@@ -76,32 +76,25 @@ def get_demo_response(personality_key: str) -> str:
 # ----------------------------
 # Background helper
 # ----------------------------
-def is_mobile():
-    """Detect if user is on mobile device."""
-    try:
-        # Check if running in Streamlit Cloud with user agent info
-        import streamlit.web.server.server as server
-        session = server.Server.get_current()._session_info_by_id
-        if session:
-            # This is a simplified check - in production you'd parse user agent
-            return False  # Default to desktop if can't detect
-    except:
-        pass
-    return False
-
-def set_background(image_path: str):
+def set_background(image_path: str, use_lightweight: bool = False):
     """Set background image if it exists, otherwise use gradient."""
-    # Always try to load background image for desktop
-    # Mobile will override with gradient via CSS media query
-    if Path(image_path).exists():
-        try:
-            img_bytes = Path(image_path).read_bytes()
-            encoded = base64.b64encode(img_bytes).decode()
-            bg_image = f"url(data:image/png;base64,{encoded})"
-        except:
-            bg_image = "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+    # If lightweight mode is enabled, always use gradient
+    if use_lightweight:
+        desktop_bg = "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+        mobile_bg = "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
     else:
-        bg_image = "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+        # For desktop, load the image if it exists
+        if Path(image_path).exists():
+            try:
+                img_bytes = Path(image_path).read_bytes()
+                encoded = base64.b64encode(img_bytes).decode()
+                desktop_bg = f"url(data:image/png;base64,{encoded})"
+            except:
+                desktop_bg = "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+        else:
+            desktop_bg = "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+        
+        mobile_bg = "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
     
     st.markdown(
         f"""
@@ -249,12 +242,18 @@ def set_background(image_path: str):
         unsafe_allow_html=True
     )
 
-set_background("background.png")
+set_background("background.png", use_lightweight)
 
 # ----------------------------
 # Streamlit UI
 # ----------------------------
 st.set_page_config(page_title="AI Personalities Showcase", page_icon="🧠", layout="centered")
+
+# Prominent mobile-friendly toggle at the very top
+st.markdown("### 📱 Mobile or slow connection?")
+use_lightweight = st.checkbox("✅ Enable Lightweight Mode (faster loading, no background image)", value=False, help="Recommended for mobile devices")
+st.markdown("---")
+
 st.title("🧠 AI Personalities Showcase")
 st.caption("Gen-AI powered personalities with distinct voices 🎭")
 
