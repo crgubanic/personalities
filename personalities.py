@@ -76,12 +76,30 @@ def get_demo_response(personality_key: str) -> str:
 # ----------------------------
 # Background helper
 # ----------------------------
+def is_mobile():
+    """Detect if user is on mobile device."""
+    try:
+        # Check if running in Streamlit Cloud with user agent info
+        import streamlit.web.server.server as server
+        session = server.Server.get_current()._session_info_by_id
+        if session:
+            # This is a simplified check - in production you'd parse user agent
+            return False  # Default to desktop if can't detect
+    except:
+        pass
+    return False
+
 def set_background(image_path: str):
     """Set background image if it exists, otherwise use gradient."""
+    # Always try to load background image for desktop
+    # Mobile will override with gradient via CSS media query
     if Path(image_path).exists():
-        img_bytes = Path(image_path).read_bytes()
-        encoded = base64.b64encode(img_bytes).decode()
-        bg_image = f"url(data:image/png;base64,{encoded})"
+        try:
+            img_bytes = Path(image_path).read_bytes()
+            encoded = base64.b64encode(img_bytes).decode()
+            bg_image = f"url(data:image/png;base64,{encoded})"
+        except:
+            bg_image = "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
     else:
         bg_image = "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
     
@@ -102,6 +120,14 @@ def set_background(image_path: str):
 
         h1, h2, h3, h4, h5, h6, p, div[data-testid="stMarkdownContainer"], span, label {{
             color: #000000 !important;
+        }}
+        
+        /* Make captions more prominent */
+        .stCaption, [data-testid="stCaptionContainer"], small {{
+            font-size: 1.1rem !important;
+            font-weight: 500 !important;
+            font-style: italic !important;
+            margin-top: 0.5rem !important;
         }}
         
         /* Caption text styling - more specific targeting */
@@ -230,7 +256,7 @@ set_background("background.png")
 # ----------------------------
 st.set_page_config(page_title="AI Personalities Showcase", page_icon="🧠", layout="centered")
 st.title("🧠 AI Personalities Showcase")
-st.caption("Gen-AI powered personalities with distinct voices. Presets are snarky and playful. Create your own! 🎭")
+st.caption("Gen-AI powered personalities with distinct voices 🎭")
 
 # Show mode indicator
 if not USE_AI:
@@ -310,7 +336,7 @@ user_input = st.text_area(
 )
 
 # Generate button
-if st.button("💬 Generate Response", type="primary"):
+if st.button("💬 Generate Snarky Response", type="primary"):
     if not user_input.strip():
         st.warning("Please enter a question.")
     else:
